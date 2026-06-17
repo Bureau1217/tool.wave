@@ -87,7 +87,7 @@ export class WaveEffect {
 
     // Right half: centre → right edge
     const gradR = gradBuilder(new Group(new Pt(cx, 0), new Pt(w, 0)));
-    this.form.fill(gradR).rect(new Group(new Pt(cx, 0), new Pt(w, h)));
+    this.form.fillOnly(true).fill(gradR).rect(new Group(new Pt(cx, 0), new Pt(w, h)));
 
     // Left half: centre → left edge (mirror)
     const gradL = gradBuilder(new Group(new Pt(cx, 0), new Pt(0, 0)));
