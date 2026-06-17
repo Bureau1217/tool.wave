@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FRÉQUENCES COMMUNES — Le Groove · outil génératif</title>
+<link rel="stylesheet" href="/style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+</head>
+<body>
+<div id="app">
+  <div id="panel">
+    <h1>FRÉQUENCES COMMUNES</h1>
+    <p class="sub">Le Groove · outil de saison</p>
+
+    <div class="group">
+      <h2>Style d'onde</h2>
+      <select id="wave">
+        <option value="lines">Lignes-fréquence — l'image devient l'onde</option>
+        <option value="warp">Liquify — colonnes ondulantes</option>
+        <option value="dots">Points — halftone coloré</option>
+        <option value="radial">Éclatement radial</option>
+        <option value="text">Texte-trame (ASCII)</option>
+        <option value="rings">Anneaux concentriques</option>
+      </select>
+      <p class="hint">Tous les styles utilisent la photo : elle module l'onde (sombre = forte), et reste lisible par-dessus si tu actives un placement. « Texte-trame » répète le sous-titre en caractères.</p>
+    </div>
+
+    <div class="group">
+      <h2>Champ d'ondes</h2>
+      <div class="ctrl"><label>Densité des lignes <span class="val" id="v-density">60</span></label>
+        <input type="range" id="density" min="12" max="160" value="60"></div>
+      <div class="ctrl"><label>Fréquence / BPM <span class="val" id="v-bpm">120</span></label>
+        <input type="range" id="bpm" min="60" max="180" value="120"></div>
+      <div class="ctrl"><label>Amplitude <span class="val" id="v-amp">40</span></label>
+        <input type="range" id="amp" min="0" max="120" value="40"></div>
+      <div class="ctrl"><label>Turbulence <span class="val" id="v-turb">25</span></label>
+        <input type="range" id="turb" min="0" max="100" value="25"></div>
+      <div class="ctrl"><label>Épaisseur de trait <span class="val" id="v-weight">2.0</span></label>
+        <input type="range" id="weight" min="0.5" max="8" step="0.1" value="2"></div>
+    </div>
+
+    <div class="group">
+      <h2>Convergence — la Jonction</h2>
+      <div class="seg" id="seg-sources">
+        <button data-v="1" class="sel">1 source</button>
+        <button data-v="2">2 — confluence</button>
+      </div>
+      <p class="hint">Deux sources = les deux champs qui se rencontrent au centre (Arve + Rhône).</p>
+    </div>
+
+    <div class="group">
+      <h2>Genre — comportement</h2>
+      <select id="genre">
+        <option value="sound">Sound system / dub — lourd, lent</option>
+        <option value="techno">Techno / club — serré, rapide</option>
+        <option value="live">Live / acoustique — organique</option>
+        <option value="scene">Arts vivants — ouvert</option>
+      </select>
+    </div>
+
+    <div class="group">
+      <h2>Couleurs</h2>
+      <select id="scheme">
+        <option value="acid">Acid — citron / magenta</option>
+        <option value="cyber">Cyber — bleu / violet</option>
+        <option value="sunset">Sunset — orange / jaune</option>
+        <option value="rave">Rave — vert / rose</option>
+        <option value="pop">Pop — rose / bleu</option>
+        <option value="solar">Solar — orange / framboise</option>
+        <option value="ink">Encre — sobre</option>
+        <option value="custom">Personnalisé</option>
+      </select>
+      <div class="colorrow">
+        <label>Fond<input type="color" id="c-bg" value="#0c0c0c"></label>
+        <label>Couleur A<input type="color" id="c-a" value="#c6ff3a"></label>
+        <label>Couleur B<input type="color" id="c-b" value="#ff2d8b"></label>
+      </div>
+      <p class="hint">Les ondes prennent un dégradé Couleur A → Couleur B. Choisis une palette vive, ou ajuste chaque couleur à la main.</p>
+    </div>
+
+    <div class="group">
+      <h2>Visuel — artiste</h2>
+      <label class="drop" id="drop">
+        Glisser une photo ou <u>parcourir</u>
+        <input type="file" id="file" accept="image/*">
+      </label>
+      <div class="presets" id="presets"></div>
+      <div class="thumb" id="thumb" style="display:none">
+        <img id="thumb-img" alt="">
+        <span class="meta" id="thumb-name">—</span>
+        <span class="x" id="thumb-x" title="Retirer">✕</span>
+      </div>
+
+      <p class="hint" style="margin-top:14px">Placement de la photo lisible</p>
+      <div class="seg" id="seg-place" style="margin-bottom:12px">
+        <button data-v="source" class="sel">Disque</button>
+        <button data-v="full">Plein</button>
+        <button data-v="band">Bandeau</button>
+        <button data-v="none">Aucune</button>
+      </div>
+
+      <p class="hint" style="margin-top:0">Traitement</p>
+      <div class="seg" id="seg-treat" style="margin-bottom:12px">
+        <button data-v="duo" class="sel">Duotone</button>
+        <button data-v="bw">Noir & blanc</button>
+        <button data-v="color">Couleur</button>
+      </div>
+
+      <div class="ctrl"><label>Taille / cadrage <span class="val" id="v-imgscale">100</span></label>
+        <input type="range" id="imgscale" min="60" max="200" value="100"></div>
+      <div class="ctrl"><label>Position verticale <span class="val" id="v-imgy">0</span></label>
+        <input type="range" id="imgy" min="-50" max="50" value="0"></div>
+      <div class="ctrl"><label>Opacité photo <span class="val" id="v-imgopacity">90</span></label>
+        <input type="range" id="imgopacity" min="0" max="100" value="90"></div>
+      <p class="hint">La photo (duotone A → B) se superpose aux ondes pour rester reconnaissable. Baisse l'opacité pour la fondre, « Aucune » pour du 100 % abstrait.</p>
+    </div>
+
+    <div class="group">
+      <h2>Textes</h2>
+      <div class="ctrl"><input type="text" id="t-title" value="SAISON 26—27" placeholder="Titre"></div>
+      <div class="ctrl"><input type="text" id="t-sub" value="FRÉQUENCES COMMUNES" placeholder="Sous-titre"></div>
+      <div class="ctrl"><input type="text" id="t-tags" value="LIVE · SOUND SYSTEM · ARTS VIVANTS" placeholder="Programmation"></div>
+      <div class="ctrl"><input type="text" id="t-date" value="LE GROOVE — GENÈVE / JONCTION" placeholder="Lieu / date"></div>
+    </div>
+
+    <div class="group">
+      <h2>Mise en page — grille</h2>
+      <div class="ctrl"><label>Colonnes <span class="val" id="v-gridc">1</span></label>
+        <input type="range" id="gridc" min="1" max="4" value="1"></div>
+      <div class="ctrl"><label>Lignes <span class="val" id="v-gridr">1</span></label>
+        <input type="range" id="gridr" min="1" max="4" value="1"></div>
+      <p class="hint" style="margin-top:0">Forme des cases</p>
+      <div class="seg" id="seg-cellshape" style="margin-bottom:12px">
+        <button data-v="rect" class="sel">Carré</button>
+        <button data-v="circle">Cercle</button>
+      </div>
+      <button class="btn ghost" id="shuffle-cells">Mélanger les cases 🎲</button>
+      <p class="hint">1×1 = pas de grille. Chaque case montre le motif, la photo ou un aplat (couleur A / B) — façon grille de blocs.</p>
+    </div>
+
+    <div class="group">
+      <h2>Typographie</h2>
+      <div class="ctrl"><label>Taille du titre <span class="val" id="v-typesize">1.3</span></label>
+        <input type="range" id="typesize" min="0.7" max="2.2" step="0.1" value="1.3"></div>
+      <p class="hint" style="margin-top:0">Effet</p>
+      <div class="seg" id="seg-typefx">
+        <button data-v="plein" class="sel">Plein</button>
+        <button data-v="contour">Contour</button>
+        <button data-v="ombre">Ombre</button>
+        <button data-v="chroma">Chroma</button>
+        <button data-v="shine">Shine</button>
+      </div>
+    </div>
+
+    <div class="group">
+      <h2>Tramage — écran rétro</h2>
+      <div class="seg" id="seg-dither" style="margin-bottom:12px">
+        <button data-v="none" class="sel">Aucun</button>
+        <button data-v="bayer">Bayer</button>
+        <button data-v="fs">Floyd-S.</button>
+        <button data-v="dots">Points</button>
+      </div>
+      <div class="ctrl"><label>Finesse (pixel) <span class="val" id="v-ditherpx">3</span></label>
+        <input type="range" id="ditherpx" min="1" max="10" value="3"></div>
+      <p class="hint">Tramage 1-bit de l'affiche entière, façon Dither Boy. Bayer = aperçu fluide ; Floyd-Steinberg & Points sont plus lourds en direct (cadence réduite) mais nets à l'export.</p>
+    </div>
+
+    <div class="group">
+      <h2>Export</h2>
+      <div class="ctrl"><label>Format</label>
+        <select id="format">
+          <option value="poster">Affiche — A3 (3:4)</option>
+          <option value="insta">Instagram — carré (1:1)</option>
+          <option value="story">Story — vertical (9:16)</option>
+        </select>
+      </div>
+      <div class="ctrl"><label>Résolution <span class="val" id="v-scale">2×</span></label>
+        <input type="range" id="scale" min="1" max="4" step="1" value="2"></div>
+      <button class="btn" id="export-png">Exporter PNG</button>
+      <button class="btn ghost" id="randomize">Aléatoire 🎲</button>
+      <p class="hint">PNG haute résolution. SVG / multi-formats simultanés = version complète de l'outil.</p>
+    </div>
+  </div>
+
+  <div id="stage">
+    <div id="canvas-wrap"></div>
+    <div id="badge">FRÉQUENCES COMMUNES · prototype</div>
+  </div>
+</div>
+
+<script src="/main.js"></script>
+</body>
+</html>

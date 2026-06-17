@@ -1,0 +1,50 @@
+:root{
+  --bg:#f5f2ec; --panel:#fbfaf6; --line:#e4dfd4;
+  --txt:#161616; --muted:#9a948a; --accent:#161616;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;background:var(--bg);color:var(--txt)}
+#app{display:flex;height:100vh;overflow:hidden}
+/* ---- panneau de contrôle ---- */
+#panel{width:320px;min-width:320px;height:100%;overflow-y:auto;background:var(--panel);border-right:1px solid var(--line);padding:18px 18px 60px}
+#panel h1{font-size:15px;letter-spacing:.14em;margin:0 0 2px;font-weight:800}
+#panel .sub{font-size:11px;letter-spacing:.18em;color:var(--muted);margin:0 0 18px;text-transform:uppercase}
+.group{border-top:1px solid var(--line);padding:14px 0 4px}
+.group h2{font-size:10px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;margin:0 0 12px}
+.ctrl{margin-bottom:14px}
+.ctrl label{display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px}
+.ctrl label .val{color:var(--accent);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--accent)}
+input[type=text]{width:100%;background:#fff;border:1px solid var(--line);color:var(--txt);padding:8px 9px;border-radius:6px;font-size:13px}
+input[type=text]:focus{outline:none;border-color:var(--accent)}
+select{width:100%;background:#fff;border:1px solid var(--line);color:var(--txt);padding:8px 9px;border-radius:6px;font-size:13px}
+.colorrow{display:flex;gap:8px;margin-top:12px}
+.colorrow label{flex:1;display:flex;flex-direction:column;gap:5px;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
+.colorrow input[type=color]{width:100%;height:32px;border:1px solid var(--line);border-radius:6px;background:none;cursor:pointer;padding:2px}
+.swatches{display:flex;gap:8px;flex-wrap:wrap}
+.sw{width:30px;height:30px;border-radius:50%;cursor:pointer;border:2px solid transparent}
+.sw.sel{border-color:var(--accent)}
+.row{display:flex;gap:8px}
+.row>*{flex:1}
+.seg{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.seg button{flex:1;background:#fff;border:none;color:var(--muted);padding:8px 4px;font-size:11px;cursor:pointer;letter-spacing:.04em}
+.seg button.sel{background:var(--accent);color:#fff;font-weight:700}
+.btn{display:block;width:100%;background:var(--accent);color:#fff;border:none;padding:12px;border-radius:8px;font-weight:800;font-size:13px;letter-spacing:.06em;cursor:pointer;margin-top:6px}
+.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--txt);font-weight:600}
+.hint{font-size:10px;color:var(--muted);line-height:1.5;margin:8px 0 0}
+/* ---- upload image ---- */
+.drop{border:1px dashed var(--line);border-radius:8px;padding:14px;text-align:center;font-size:11px;color:var(--muted);cursor:pointer;transition:.15s}
+.drop:hover,.drop.over{border-color:var(--accent);color:var(--txt)}
+.drop input{display:none}
+.thumb{display:flex;align-items:center;gap:10px;margin-top:10px}
+.thumb img{width:46px;height:46px;object-fit:cover;border-radius:6px;border:1px solid var(--line)}
+.thumb .meta{flex:1;font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.thumb .x{color:var(--muted);cursor:pointer;font-size:14px;padding:2px 6px}
+.thumb .x:hover{color:var(--accent)}
+.presets{display:flex;gap:6px;margin-top:10px}
+.presets img{width:100%;height:42px;object-fit:cover;border-radius:5px;border:2px solid transparent;cursor:pointer}
+.presets img.sel{border-color:var(--accent)}
+/* ---- scène ---- */
+#stage{flex:1;display:flex;align-items:center;justify-content:center;background:#eceae3;position:relative;overflow:hidden}
+#canvas-wrap{box-shadow:0 8px 34px rgba(0,0,0,.14)}
+#badge{position:absolute;top:14px;right:16px;font-size:10px;letter-spacing:.14em;color:var(--muted)}
