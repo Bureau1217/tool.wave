@@ -1,19 +1,26 @@
 import { WaveEffect } from "./WaveEffect";
 import "./style.css";
 
-const canvas = document.querySelector<HTMLCanvasElement>("#scene")!;
+const COUNT = 5;
 
-const effect = new WaveEffect(canvas, {
-  waveAmp:     .5,   // oscillation amplitude: 0 = static, 1 = full palette cycle
-  scrollSpeed: 1,   // speed of the oscillation
-  seam:        0,
-  palette: ["#1d6286", "#2cc181", "#7e7cfb", "#bcbcf9"],
-});
+const effects: WaveEffect[] = [];
 
-effect.start();
+for (let i = 0; i < COUNT; i++) {
+  const canvas = document.createElement("canvas");
+  document.body.appendChild(canvas);
 
-// Pause when the tab is hidden to save the GPU.
+  const effect = new WaveEffect(canvas, {
+    rows:        COUNT,
+    waveAmp:     0.5,
+    scrollSpeed: 1,
+    seam:        0,
+    palette: ["#1d6286", "#2cc181", "#7e7cfb", "#bcbcf9"],
+  });
+
+  effect.start();
+  effects.push(effect);
+}
+
 document.addEventListener("visibilitychange", () => {
-  if (document.hidden) effect.stop();
-  else effect.start();
+  effects.forEach(e => document.hidden ? e.stop() : e.start());
 });

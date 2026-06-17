@@ -1,4 +1,4 @@
-import { CanvasSpace, CanvasForm, Group, Pt } from "pts";
+import { Bound, CanvasForm, CanvasSpace, Group, Pt } from "pts";
 
 // ── colour helpers ────────────────────────────────────────────────────────────
 
@@ -32,6 +32,8 @@ function samplePalette(
 // ── options ───────────────────────────────────────────────────────────────────
 
 export interface WaveOptions {
+  /** Total number of rows stacked in the window — sets this canvas height. */
+  rows?: number;
   waveAmp?: number;
   scrollSpeed?: number;
   grain?: number;
@@ -45,57 +47,68 @@ export class WaveEffect {
   private space: CanvasSpace;
   private form: CanvasForm;
   private colors: [number, number, number][];
+  private rows: number;
   private waveAmp: number;
   private scrollSpeed: number;
   private seam: number;
 
   constructor(canvas: HTMLCanvasElement, options: WaveOptions = {}) {
+    this.rows        = options.rows        ?? 1;
     this.waveAmp     = options.waveAmp     ?? 0.3;
     this.scrollSpeed = options.scrollSpeed ?? 0.5;
     this.seam        = options.seam        ?? 0.45;
     this.colors      = (options.palette    ?? ["#1d6286", "#2cc181", "#7e7cfb", "#bcbcf9"])
                          .map(hexToRgb) as [number, number, number][];
 
-    this.space = new CanvasSpace(canvas).setup({ bgcolor: "#000000", resize: true });
+    // resize: false — we manage dimensions explicitly via space.resize()
+    this.space = new CanvasSpace(canvas).setup({ bgcolor: "#000000", retina: true, resize: false });
     this.form  = this.space.getForm();
+
+    this.applySize();
+    window.addEventListener("resize", this.onResize);
 
     this.space.add({ animate: (time) => this.draw(time / 1000) });
   }
+
+  private applySize(): void {
+    const w = window.innerWidth;
+    const h = Math.floor(window.innerHeight / this.rows);
+    this.space.resize(new Bound(new Pt(0, 0), new Pt(w, h)));
+  }
+
+  private onResize = (): void => {
+    this.applySize();
+  };
 
   private draw(t: number): void {
     const w  = this.space.size.x;
     const h  = this.space.size.y;
     const cx = w / 2;
 
-    // Oscillating phase shifts the gradient position back and forth
     const phase = Math.sin(t * this.scrollSpeed) * this.waveAmp;
 
-    // Build colour stops: centre (mx=0) → edge (mx=1)
-    const STOPS = 50;
+    const STOPS = 32;
     const stops: [number, string][] = [];
     for (let i = 0; i <= STOPS; i++) {
       const mx = i / STOPS;
       const [r, g, b] = samplePalette(mx * 0.5 + phase, this.colors);
-      // Darken at centre (seam)
       const s = Math.exp(-(mx * mx) / 0.006) * this.seam;
       stops.push([mx, `rgb(${(r * (1 - s)) | 0},${(g * (1 - s)) | 0},${(b * (1 - s)) | 0})`]);
     }
 
-    // form.gradient() returns a builder function;
-    // call it with a Group of [startPt, endPt] to get a CanvasGradient.
     const gradBuilder = this.form.gradient(stops);
 
-    // Right half: centre → right edge
     const gradR = gradBuilder(new Group(new Pt(cx, 0), new Pt(w, 0)));
     this.form.fillOnly(true).fill(gradR).rect(new Group(new Pt(cx, 0), new Pt(w, h)));
 
-    // Left half: centre → left edge (mirror)
     const gradL = gradBuilder(new Group(new Pt(cx, 0), new Pt(0, 0)));
     this.form.fill(gradL).rect(new Group(new Pt(0, 0), new Pt(cx, h)));
-
   }
 
   start():   void { this.space.play(); }
   stop():    void { this.space.pause(); }
-  dispose(): void { this.space.dispose(); }
+  dispose(): void {
+    window.removeEventListener("resize", this.onResize);
+    this.space.dispose();
+  }
 }
