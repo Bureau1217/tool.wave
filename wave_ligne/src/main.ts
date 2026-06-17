@@ -1,13 +1,12 @@
-import { MirrorBlocksEffect } from "./MirrorBlocksEffect";
+import { WaveEffect } from "./WaveEffect";
 import "./style.css";
 
 const canvas = document.querySelector<HTMLCanvasElement>("#scene")!;
 
-const effect = new MirrorBlocksEffect(canvas, {
-  waveAmp: 0.3,      // oscillation: 0 = static, 1 = cycle through full palette
-  scrollSpeed: 0.5,  // speed of the oscillation
-  grain: 0.15,
-  seam: 0.45,
+const effect = new WaveEffect(canvas, {
+  waveAmp:     .5,   // oscillation amplitude: 0 = static, 1 = full palette cycle
+  scrollSpeed: 1,   // speed of the oscillation
+  seam:        0,
   palette: ["#1d6286", "#2cc181", "#7e7cfb", "#bcbcf9"],
 });
 
