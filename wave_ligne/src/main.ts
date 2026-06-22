@@ -14,7 +14,7 @@ for (let i = 0; i < COUNT; i++) {
     waveAmp:     0.5,
     scrollSpeed: 1,
     seam:        0,
-    palette: ["#1d6286", "#2cc181", "#7e7cfb", "#bcbcf9"],
+    palette: ["#3d1581", "#fb34f9", "#fcfcfc", "#221cf5"],
   });
 
   effect.start();
